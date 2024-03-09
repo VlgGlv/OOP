@@ -3,30 +3,25 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+
 public class SimpleDotComTestDrive {
     public static void main (String[] args){
         Ship ship = new Ship();
         Pool pool = new Pool();
+        Player player = new Player();
 
-        while (ship.check_live()) {
-            int userGuess = shoot_loc.get((int)(Math.random() * (shoot_loc.size() - 1)));
-
-            System.out.println("Игрок стреляет по клетке: " + Integer.toString(userGuess));
-
-            ship.get_hit(userGuess);
-            shoot_loc.remove(Integer.valueOf(userGuess));
+        while (ship.check_live()){
+            Bullet bullet = player.shoot(pool);
         }
         System.out.println("Игра окончена.");
     }
 }
 
-class Judge{
-    void get_hit(Ship ship, Pool pool, Array shoot){
-    }
-}
 
 class Pool{
-    HashMap<String, HashMap> pool = new HashMap<String, ArrayList>();
+    HashMap<String, HashMap> pool = new HashMap<String, HashMap>();
+    HashMap<String, HashMap> shoot_pool = new HashMap<String, HashMap>();
+
     Integer[] tag_nums = {1, 2, 3, 4, 5, 6};
     String[] tag_abc = {"a","b","c","d","e","f"};
 
@@ -41,15 +36,19 @@ class Pool{
             pool.put(tag, str_pool);
             System.out.println(pool.get(tag));
         }
+        shoot_pool = pool;
         System.out.print("Поле создано.");
+    }
 
-
-    void get_hit(Array shoot){
-        int abc = shoot[0];
-        int num = shoot[1]
+    void get_hit(Bullet shoot){
+        String abc = shoot.getAbc();
+        Integer num = shoot.getNum();
 
         if (pool.get(abc).get(num) == false){
             pool.get(abc).put(num, true);
+            shoot_pool.get(abc).remove(num, false);
+            shoot_pool.removeIf(key -> shoot_pool.get(key).isEmpty());
+
         } else {
             System.out.println("По этой клетке уже стреляли");
         }
@@ -60,10 +59,17 @@ class Player{
     boolean hit = false;
     boolean mayhit = false;
     String[] direct = {"v", "h"};
-    Bullet <String, Integer>last_cell = new Bullet<String, Integer>()
+    Bullet <String, Integer>last_cell = new Bullet<String, Integer>();
 
     Bullet<String, Integer> shoot(Pool pool){
-        String abc = (String) (pool.tag_abc[Math.random()*(pool.tag_abc.length)]);
+        String abc = pool.shoot_pool.keySet().iterator().next();
+        Integer num = (int)(shoot_pool.get(abc).keySet().iterator().next());
+        Bullet<String, Integer> fire = new Bullet(abc, num);
+        System.out.println("Игрок стреляет по клетке " + abc + num);
+
+        return fire;
+    }
+}
 
 class Ship{
 
@@ -77,6 +83,7 @@ class Ship{
     void create_ship(){
         int size = (int)(Math.random() * 4);
         int zero_position = (int)(Math.random()*(6 - size));
+
         int i = 0;
 
         while (i <= size){
@@ -135,7 +142,7 @@ class Bullet<A, B> {
     }
 
     B getNum(){
-        return this.num
+        return this.num;
     }
 }
 

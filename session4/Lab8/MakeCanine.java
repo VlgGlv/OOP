@@ -11,3 +11,5 @@ public class MakeCanine {
     }
 }
 
+class Animals{}
+class Dog{}

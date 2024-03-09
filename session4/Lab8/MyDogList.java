@@ -11,3 +11,5 @@ public class MyDogList {
         }
     }
 }
+
+class Dog{}
